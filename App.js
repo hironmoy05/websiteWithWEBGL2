@@ -60,7 +60,7 @@ export default class Sketch {
 	}
 
 	addObjects = () => {
-		this.geometry = new THREE.PlaneBufferGeometry(300, 300, 100, 100);
+		this.geometry = new THREE.PlaneBufferGeometry(500, 500, 100, 100);
 		// this.material = new THREE.MeshNormalMaterial();
 		this.renderer.setPixelRatio(window.devicePixelRatio);
 		// this.renderer.setPixelRatio(2);
@@ -71,8 +71,9 @@ export default class Sketch {
 				time: { value: 1.0 },
 				uProgress: { value: 1 },
 				uTexture: { value: new THREE.TextureLoader().load(numberTexture) },
+				uTextureSize: { value: new THREE.Vector2(100, 100) },
 				uResolution: { value: new THREE.Vector2(this.width, this.height) },
-				uQuadSize: { value: new THREE.Vector2(300, 300) },
+				uQuadSize: { value: new THREE.Vector2(500, 500) },
 			},
 			vertexShader: vertex,
 			fragmentShader: fragment,
