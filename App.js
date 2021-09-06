@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import { OrbitControls } from 'THREE/examples/jsm/controls/OrbitControls';
 import vertex from './Shaders/vertex.glsl';
 import fragment from './Shaders/fragment.glsl';
+import numberTexture from './texture.jpg';
+import waterTexture from './water.jpg';
+import * as dat from 'dat.gui';
 
 export default class Sketch {
 	constructor(options) {
@@ -17,7 +20,7 @@ export default class Sketch {
 		);
 		this.camera.position.z = 600;
 
-		this.camera.fov = 2 * Math.atan((this.height / 2 )/ 600) * 180 / Math.PI;
+		this.camera.fov = (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI;
 
 		this.scene = new THREE.Scene();
 
@@ -28,10 +31,20 @@ export default class Sketch {
 		this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
 		this.time = 0;
+		this.setupSettings();
 		this.resize();
 		this.addObjects();
 		this.render();
 		this.setupResize();
+	}
+
+	setupSettings() {
+		this.settings = {
+			progress: 0,
+		};
+
+		this.gui = new dat.GUI();
+		this.gui.add(this.settings, 'progress', 0, 1, 0.001);
 	}
 
 	resize = () => {
@@ -53,9 +66,11 @@ export default class Sketch {
 		// this.renderer.setPixelRatio(2);
 
 		this.material = new THREE.ShaderMaterial({
-			wireframe: true,
+			wireframe: false,
 			uniforms: {
 				time: { value: 1.0 },
+				uProgress: { value: 1 },
+				uTexture: { value: new THREE.TextureLoader().load(numberTexture) },
 				resolution: { value: new THREE.Vector2() },
 			},
 			vertexShader: vertex,
@@ -64,10 +79,14 @@ export default class Sketch {
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
 		this.scene.add(this.mesh);
+		this.mesh.position.x = 300;
+		this.mesh.rotation.z = 0.5;
 	};
 
 	render = () => {
 		this.time += 0.05;
+		this.material.uniforms.time.value = this.time;
+		this.material.uniforms.uProgress.value = this.settings.progress;
 		this.mesh.rotation.x = this.time / 2000;
 		this.mesh.rotation.y = this.time / 1000;
 
